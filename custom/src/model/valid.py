@@ -16,20 +16,21 @@ def valid(model,
     Returns:
         tuple(float, float): valid loss and valid accuracy
     """
-    loss = []
-    correct = []
-    for idx, (images, labels) in enumerate(valid_loader):
-        images = images.to(device)
-        labels = labels.to(device)
+    with torch.no_grad():
+        loss = []
+        correct = []
+        for idx, (images, labels) in enumerate(valid_loader):
+            images = images.to(device)
+            labels = labels.to(device)
 
-        loss_step, correct_step = valid_step(model, images,
-                                                labels, loss_fn)
+            loss_step, correct_step = valid_step(model, images,
+                                                    labels, loss_fn)
+            
+            loss.append(loss_step / images.size()[0])
+            correct.append(correct_step / images.size()[0])
         
-        loss.append(loss_step / images.size()[0])
-        correct.append(correct_step / images.size()[0])
-    
-    valid_loss = sum(loss) / len(loss)
-    valid_acc = sum(correct) / len(correct)
+        valid_loss = sum(loss) / len(loss)
+        valid_acc = sum(correct) / len(correct)
 
     return valid_loss, valid_acc
 

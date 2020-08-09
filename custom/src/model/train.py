@@ -1,4 +1,4 @@
-from valid import valid
+from .valid import valid
 
 import torch
 import torch.nn.functional as F
@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 def train(model,
             device,
-            train_dataloader,
+            train_loader,
             valid_loader,
             loss_fn,
             optimizer,
@@ -17,7 +17,7 @@ def train(model,
     Args:
         model (model): model architecture
         device (str): cuda or cpu
-        train_dataloader (DataLoader): train data loader
+        train_loader (DataLoader): train data loader
         valid_loader (DataLoader): valid data loader
         loss_fn (loss): loss function
         optimizer (optim): optimizer for model
@@ -25,9 +25,10 @@ def train(model,
         epoch (int, optional): number of epoch for training. Defaults to 100.
     """
     for idx in range(epoch):
-        train_loss, train_acc = train_epoch(model, device, train_dataloader,
+        # Training
+        train_loss, train_acc = train_epoch(model, device, train_loader,
                                             loss_fn, optimizer, scheduler)
-        
+        # Validation
         valid_loss, valid_acc = valid(model, device,
                                         valid_loader, loss_fn)
 
@@ -36,7 +37,7 @@ def train(model,
 
 def train_epoch(model,
                 device,
-                train_dataloader,
+                train_loader,
                 loss_fn,
                 optimizer,
                 scheduler):
@@ -56,7 +57,7 @@ def train_epoch(model,
     loss = []
     correct = []
     # Training epoch
-    for idx, (images, labels) in enumerate(train_dataloader):
+    for idx, (images, labels) in enumerate(train_loader):
         # Move data to device
         images = images.to(device)
         labels = labels.to(device)
